@@ -8,7 +8,7 @@ import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
 
 // Create Express app and HTTP server
-cconst app = express();
+const app = express();
 const server = http.createServer(app)
 
 export const io = new Server(server, {

@@ -8,13 +8,17 @@ import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
 
 // Create Express app and HTTP server
-const app = express();
+cconst app = express();
 const server = http.createServer(app)
 
-// Initialize socket.io server
 export const io = new Server(server, {
-    cors: {origin: "*"}
+    cors: { origin: process.env.CLIENT_URL || "*" }
 })
+
+app.use(cors({
+    origin: process.env.CLIENT_URL || "*",
+    credentials: true
+}))
 
 // Store online users
 export const userSocketMap = {}; // { userId: socketId }

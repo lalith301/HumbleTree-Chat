@@ -1,13 +1,14 @@
 import admin from "firebase-admin";
-import { createRequire } from "module";
 
-const require = createRequire(import.meta.url);
-const serviceAccount = require("./firebaseAdmin.json");
-
-// Initialize Firebase Admin SDK with service account credentials
+// Initialize Firebase Admin using environment variables instead of JSON file
 if (!admin.apps.length) {
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
+        credential: admin.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            // Replace escaped newlines in private key
+            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        })
     });
 }
 

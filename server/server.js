@@ -20,19 +20,29 @@ export const io = new Server(server, {
 export const userSocketMap = {}; // { userId: socketId }
 
 // Socket.io connection handler
-io.on("connection", (socket)=>{
+io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
-    console.log("User Connected", userId);
 
-    if(userId) userSocketMap[userId] = socket.id;
-    
-    // Emit online users to all connected clients
+    // If user already has a socket, disconnect the old one
+    if (userSocketMap[userId]) {
+        const oldSocketId = userSocketMap[userId];
+        const oldSocket = io.sockets.sockets.get(oldSocketId);
+        if (oldSocket) {
+            oldSocket.disconnect();
+        }
+    }
+
+    console.log("User Connected:", userId);
+    if (userId) userSocketMap[userId] = socket.id;
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-    socket.on("disconnect", ()=>{
-        console.log("User Disconnected", userId);
-        delete userSocketMap[userId];
-        io.emit("getOnlineUsers", Object.keys(userSocketMap))
+    socket.on("disconnect", () => {
+        console.log("User Disconnected:", userId);
+        // Only delete if this is still the current socket
+        if (userSocketMap[userId] === socket.id) {
+            delete userSocketMap[userId];
+            io.emit("getOnlineUsers", Object.keys(userSocketMap))
+        }
     })
 })
 

@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "humbletree-server",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -17,8 +17,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "firebase-admin": "^13.8.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.1",
+    "nodemailer": "^8.0.7",
     "nodemon": "^3.1.10",
     "socket.io": "^4.8.1"
   }

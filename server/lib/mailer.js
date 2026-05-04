@@ -1,10 +1,18 @@
-import { Resend } from 'resend';
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 export const sendOTPEmail = async (email, otp) => {
-    await resend.emails.send({
-        from: 'HumbleTree <onboarding@resend.dev>',
+    await transporter.sendMail({
+        from: `"HumbleTree" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: 'Your HumbleTree verification code',
         html: `
@@ -19,8 +27,6 @@ export const sendOTPEmail = async (email, otp) => {
                 </div>
                 <p style="color: #8696a0; font-size: 14px;">This code expires in <strong style="color: #e9edef;">10 minutes</strong>.</p>
                 <p style="color: #8696a0; font-size: 14px;">If you didn't request this, please ignore this email.</p>
-                <hr style="border: none; border-top: 1px solid #2a3942; margin: 32px 0;"/>
-                <p style="color: #3b4a54; font-size: 12px; text-align: center;">HumbleTree Chat — end-to-end encrypted</p>
             </div>
         `
     });

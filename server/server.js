@@ -11,12 +11,32 @@ import { Server } from "socket.io";
 const app = express();
 const server = http.createServer(app)
 
+const allowedOrigins = [
+    "https://humble-tree-chat.vercel.app",
+    process.env.CLIENT_URL
+]
+
 export const io = new Server(server, {
-    cors: { origin: process.env.CLIENT_URL || "*" }
+    cors: { 
+        origin: function(origin, callback) {
+            if (!origin || allowedOrigins.includes(origin) || origin.includes("vercel.app")) {
+                callback(null, true)
+            } else {
+                callback(new Error("Not allowed by CORS"))
+            }
+        },
+        credentials: true
+    }
 })
 
 app.use(cors({
-    origin: process.env.CLIENT_URL || "*",
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin) || origin.includes("vercel.app")) {
+            callback(null, true)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
     credentials: true
 }))
 

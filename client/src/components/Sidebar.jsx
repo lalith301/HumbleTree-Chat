@@ -6,7 +6,7 @@ import { ChatContext } from '../../context/ChatContext';
 
 const Sidebar = () => {
     const { getUsers, users, selectedUser, setSelectedUser,
-        unseenMessages, setUnseenMessages } = useContext(ChatContext);
+        unseenMessages, setUnseenMessages, lastMessages } = useContext(ChatContext);
     const { logout, onlineUsers, authUser } = useContext(AuthContext)
     const [input, setInput] = useState('')
     const navigate = useNavigate();
@@ -21,13 +21,7 @@ useEffect(() => {
     getUsers();
 }, [])
 
-// Re-sort when online status changes — no API call needed
-useEffect(() => {
-    if (users.length > 0) {
-        // Just trigger a re-render to update online indicators
-        setUsers(prev => [...prev])
-    }
-}, [onlineUsers])
+
 
     // Format timestamp for last message
     const formatTime = (date) => {
@@ -116,7 +110,7 @@ useEffect(() => {
                             <div className='flex justify-between items-center mb-0.5'>
                                 <p className='text-[#e9edef] font-medium text-sm truncate'>{user.fullName}</p>
                                 <span className='text-[#8696a0] text-xs flex-shrink-0 ml-2'>
-                                    {formatTime(user.updatedAt)}
+                                    {formatTime(lastMessages[user._id])}
                                 </span>
                             </div>
                             <div className='flex justify-between items-center'>

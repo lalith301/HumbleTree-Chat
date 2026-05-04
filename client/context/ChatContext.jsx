@@ -10,6 +10,7 @@ export const ChatProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null)
     const [unseenMessages, setUnseenMessages] = useState({})
+    const [lastMessages, setLastMessages] = useState({})
 
     const { socket, axios } = useContext(AuthContext);
 
@@ -27,13 +28,18 @@ export const ChatProvider = ({ children }) => {
         try {
             const { data } = await axios.get("/api/messages/users");
             if (data.success) {
+                // Replace the sort block
                 const sorted = data.users.sort((a, b) => {
-                    const aTime = data.lastMessages?.[a._id] || a.updatedAt || 0
-                    const bTime = data.lastMessages?.[b._id] || b.updatedAt || 0
+                    const aTime = data.lastMessages?.[a._id] || null
+                    const bTime = data.lastMessages?.[b._id] || null
+                    if (!aTime && !bTime) return 0
+                    if (!aTime) return 1
+                    if (!bTime) return -1
                     return new Date(bTime) - new Date(aTime)
                 })
                 setUsers(sorted)
                 setUnseenMessages(data.unseenMessages)
+                setLastMessages(data.lastMessages || {})  // ADD THIS LINE
             }
         } catch (error) {
             toast.error(error.message)
@@ -95,6 +101,16 @@ export const ChatProvider = ({ children }) => {
                     ]
                 }
                 axios.put(`/api/messages/mark/${newMessage._id}`);
+                const newTime = data.newMessage.createdAt
+                setLastMessages(prev => ({ ...prev, [selectedUser._id]: newTime }))
+                setUsers(prev => [...prev].sort((a, b) => {
+                    const aTime = a._id === selectedUser._id ? newTime : lastMessages[a._id] || null
+                    const bTime = b._id === selectedUser._id ? newTime : lastMessages[b._id] || null
+                    if (!aTime && !bTime) return 0
+                    if (!aTime) return 1
+                    if (!bTime) return -1
+                    return new Date(bTime) - new Date(aTime)
+                }))
             } else {
                 // Message from another user — increment unseen
                 setUnseenMessages(prev => ({
@@ -116,7 +132,7 @@ export const ChatProvider = ({ children }) => {
     const value = {
         messages, users, selectedUser, getUsers,
         getMessages, sendMessage, setSelectedUser,
-        unseenMessages, setUnseenMessages
+        unseenMessages, setUnseenMessages, lastMessages
     }
 
     return (

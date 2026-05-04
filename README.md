@@ -112,7 +112,7 @@ HumbleTree Chat/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/humbletree-chat.git
+git clone https://github.com/lalith301/humbletree-chat.git
 cd humbletree-chat
 ```
 

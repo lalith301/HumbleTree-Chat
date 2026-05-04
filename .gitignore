@@ -1,3 +1,4 @@
 node_modules
 .env
-server/lib/firebaseAdmin.json
+server/lib/firebaseAdmin.jsonserver/.env
+client/.env

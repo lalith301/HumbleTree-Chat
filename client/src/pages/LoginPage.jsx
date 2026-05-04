@@ -6,7 +6,7 @@ import assets from '../assets/assets'
 import toast from 'react-hot-toast'
 
 const LoginPage = () => {
-    const { firebaseLogin, login } = useContext(AuthContext)
+    const { firebaseLogin } = useContext(AuthContext)
 
     // Steps: 'landing' | 'email' | 'otp' | 'profile' | 'signin'
     const [step, setStep] = useState('landing')
@@ -18,12 +18,7 @@ const LoginPage = () => {
     const [profilePic, setProfilePic] = useState('')
     const [isNewUser, setIsNewUser] = useState(false)
 
-    // Email/password signin state
-    const [signinEmail, setSigninEmail] = useState('')
-    const [signinPassword, setSigninPassword] = useState('')
-    const [isSignup, setIsSignup] = useState(false)
-    const [signinFullName, setSigninFullName] = useState('')
-    const [signinBio, setSigninBio] = useState('')
+    
 
     const otpRefs = useRef([])
     const { axios } = useContext(AuthContext)
@@ -178,26 +173,6 @@ const LoginPage = () => {
         reader.readAsDataURL(file)
     }
 
-    // Handle email/password signin
-    const handleEmailSignin = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        try {
-            await login(
-                isSignup ? 'signup' : 'login',
-                {
-                    fullName: signinFullName,
-                    email: signinEmail,
-                    password: signinPassword,
-                    bio: signinBio
-                }
-            )
-        } catch (error) {
-            toast.error(error.message)
-        } finally {
-            setLoading(false)
-        }
-    }
 
     return (
         <div className='min-h-screen bg-[#111b21] flex items-center justify-center p-4'>
@@ -241,13 +216,7 @@ const LoginPage = () => {
                             Continue with Email OTP
                         </button>
 
-                        {/* Email/Password link */}
-                        <p
-                            onClick={() => setStep('signin')}
-                            className='text-[#8696a0] text-sm cursor-pointer hover:text-[#00a884] transition-colors'
-                        >
-                            Sign in with password instead
-                        </p>
+                        
                     </div>
                 )}
 
@@ -387,75 +356,7 @@ const LoginPage = () => {
                     </div>
                 )}
 
-                {/* EMAIL/PASSWORD SIGNIN STEP */}
-                {step === 'signin' && (
-                    <div className='flex flex-col gap-6'>
-                        <div className='flex flex-col items-center gap-2'>
-                            <img src={assets.logo_icon} alt="" className='w-14'/>
-                            <h2 className='text-white text-xl font-medium'>
-                                {isSignup ? 'Create Account' : 'Welcome Back'}
-                            </h2>
-                        </div>
-
-                        <form onSubmit={handleEmailSignin} className='flex flex-col gap-4'>
-                            {isSignup && (
-                                <>
-                                    <input
-                                        type='text'
-                                        value={signinFullName}
-                                        onChange={(e) => setSigninFullName(e.target.value)}
-                                        placeholder='Full Name'
-                                        required
-                                        className='bg-[#202c33] text-white border border-[#2a3942] rounded-lg px-4 py-3 outline-none focus:border-[#00a884] placeholder-[#8696a0] transition-colors'
-                                    />
-                                    <textarea
-                                        value={signinBio}
-                                        onChange={(e) => setSigninBio(e.target.value)}
-                                        placeholder='Short bio...'
-                                        rows={2}
-                                        className='bg-[#202c33] text-white border border-[#2a3942] rounded-lg px-4 py-3 outline-none focus:border-[#00a884] placeholder-[#8696a0] resize-none transition-colors'
-                                    />
-                                </>
-                            )}
-                            <input
-                                type='email'
-                                value={signinEmail}
-                                onChange={(e) => setSigninEmail(e.target.value)}
-                                placeholder='Email Address'
-                                required
-                                className='bg-[#202c33] text-white border border-[#2a3942] rounded-lg px-4 py-3 outline-none focus:border-[#00a884] placeholder-[#8696a0] transition-colors'
-                            />
-                            <input
-                                type='password'
-                                value={signinPassword}
-                                onChange={(e) => setSigninPassword(e.target.value)}
-                                placeholder='Password'
-                                required
-                                className='bg-[#202c33] text-white border border-[#2a3942] rounded-lg px-4 py-3 outline-none focus:border-[#00a884] placeholder-[#8696a0] transition-colors'
-                            />
-
-                            <button
-                                type='submit'
-                                disabled={loading}
-                                className='w-full bg-[#00a884] text-white font-medium py-3 rounded-lg hover:bg-[#008f72] transition-all disabled:opacity-50'
-                            >
-                                {loading ? 'Please wait...' : isSignup ? 'Create Account' : 'Login'}
-                            </button>
-                        </form>
-
-                        <p className='text-[#8696a0] text-sm text-center'>
-                            {isSignup ? 'Already have an account? ' : "Don't have an account? "}
-                            <span
-                                onClick={() => setIsSignup(!isSignup)}
-                                className='text-[#00a884] cursor-pointer hover:underline'
-                            >
-                                {isSignup ? 'Login' : 'Sign up'}
-                            </span>
-                        </p>
-
-                        <p onClick={() => setStep('landing')} className='text-[#8696a0] text-sm text-center cursor-pointer hover:text-white transition-colors'>← Back</p>
-                    </div>
-                )}
+                
 
             </div>
         </div>

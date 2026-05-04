@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOTPEmail = async (email, otp) => {
     await resend.emails.send({
-        from: 'HumbleTree <onboarding@resend.dev>',
+        from: 'HumbleTree <noreply@humbletree.xyz>',
         to: email,
         subject: 'Your HumbleTree verification code',
         html: `

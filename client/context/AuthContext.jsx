@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
     const [authUser, setAuthUser] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [socket, setSocket] = useState(null);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
     const checkAuth = async () => {
         try {
@@ -24,6 +25,8 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.log(error.message)
+        } finally {
+            setIsCheckingAuth(false)
         }
     }
 
@@ -119,6 +122,8 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             axios.defaults.headers.common["authorization"] = `Bearer ${token}`;
             checkAuth();
+        } else {
+            setIsCheckingAuth(false)  // ADD THIS
         }
     }, [])
 
@@ -130,7 +135,8 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateProfile,
-        firebaseLogin
+        firebaseLogin,
+        isCheckingAuth
     }
 
     return (
